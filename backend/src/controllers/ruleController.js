@@ -24,7 +24,6 @@ export const createMongooseDoc = (node) => {
   return doc;
 };
 
-
 export const createRule = async (req, res) => {
   try {
     const { ruleString, ruleName } = req.body;
@@ -70,12 +69,73 @@ export const createRule = async (req, res) => {
 
 export const evaluateRule = async (req, res) => {
   try {
-    const { ast, data } = req.body;
-    const result = engine.evaluateRule(ast, data);
+    const { ruleId } = req.params;
+    const { data } = req.body;
 
-    res.status(200).json({ eligible: result });
+    // Validate required data fields
+    const requiredFields = ["age", "department", "salary", "experience"];
+    const missingFields = requiredFields.filter(
+      (field) => !data.hasOwnProperty(field)
+    );
+
+    if (missingFields.length > 0) {
+      return res.status(400).json({
+        error: `Missing required fields: ${missingFields.join(", ")}`,
+      });
+    }
+
+    // Fetch rule from database
+    const rule = await RuleNode.findById(ruleId, {
+      ruleName: 1,
+      ruleString: 1,
+    });
+
+    if (!rule) {
+      return res.status(404).json({
+        error: "Rule not found",
+      });
+    }
+
+    // Create AST from rule string
+    const ast = engine.createRule(rule.ruleString);
+
+    console.log("Evaluating rule", ast, data);
+    // console.log("Evaluating rule", JSON.stringify(ast));
+    // Evaluate the rule against provided data
+    const result = engine.evaluateRule(ast, data);
+    // console.log("Rule evaluation result:", result, rule);
+
+    // Return the evaluation result
+    res.status(200).json({
+      ruleId: rule._id,
+      ruleName: rule.ruleName,
+      eligible: result,
+      evaluatedData: data,
+    });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    // Log the error for debugging
+    console.error("Rule evaluation error:", error);
+
+    // Determine the appropriate error response
+    if (error.message.includes("Missing field")) {
+      return res.status(400).json({
+        error: "Data validation failed",
+        details: error.message,
+      });
+    }
+
+    if (error.message.includes("Failed to create rule")) {
+      return res.status(400).json({
+        error: "Invalid rule format",
+        details: error.message,
+      });
+    }
+
+    // Default error response
+    res.status(500).json({
+      error: "Internal server error",
+      details: error.message,
+    });
   }
 };
 
@@ -122,27 +182,16 @@ export const updateRule = async (req, res) => {
   try {
     const { ruleId } = req.params;
     const { ruleString, ruleName } = req.body;
-    console.log("Updating rule", ruleId, ruleName, ruleString);
     // Parse new rule string if provided
     const ast = ruleString ? engine.createRule(ruleString) : null;
-    console.log("Updating rule2", ast);
 
     const updateDoc = createMongooseDoc(ast);
-    console.log("Updating rule3", ruleId, ruleName, ruleString);
     if (ruleName) updateDoc.ruleName = ruleName;
-    console.log("Updating rule4", ruleId, updateDoc.ruleName);
     if (ruleString) updateDoc.ruleString = ruleString;
-    console.log(
-      "Updating rule5",
-      ruleId,
-      updateDoc.ruleName,
-      updateDoc.ruleString
-    );
 
     const rule = await RuleNode.findByIdAndUpdate(ruleId, updateDoc, {
       new: true,
     });
-    console.log("Updating rule6", rule);
 
     if (!rule) {
       return res.status(404).json({ error: "Rule not found" });
@@ -157,7 +206,7 @@ export const updateRule = async (req, res) => {
 export const combineRules = async (req, res) => {
   try {
     const { ruleIds } = req.body;
-    console.log("Combining rules", ruleIds);
+    // console.log("Combining rules", ruleIds);
 
     // Fetch the rules to combine
     const rules = await RuleNode.find({ _id: { $in: ruleIds } });
@@ -201,3 +250,37 @@ export const combineRules = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+// export const evaluateUserRule = async (req, res) => {
+//   const { ast, data } = req.body;
+
+//   try {
+//     const result = engine.evaluateRule(ast, data);
+//     res.status(200).json({ success: true, result });
+//   } catch (error) {
+//     res.status(400).json({ success: false, message: error.message });
+//   }
+// };
+
+// export const registerCustomFunction = async (req, res) => {
+//   const { name, fnBody } = req.body; // Expecting 'name' and 'fnBody' in the request
+
+//   try {
+//     // Convert the function body from string to a real function
+//     const fn = new Function(`return ${fnBody}`)();
+
+//     // Register the function with the engine
+//     engine.registerFunction(name, fn);
+
+//     res.status(200).json({
+//       success: true,
+//       message: `Function '${name}' registered successfully.`,
+//     });
+//   } catch (error) {
+//     console.error(`Failed to register function: ${error.message}`);
+//     res.status(400).json({
+//       success: false,
+//       message: `Failed to register function: ${error.message}`,
+//     });
+//   }
+// };

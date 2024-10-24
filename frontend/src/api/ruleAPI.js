@@ -44,6 +44,7 @@ export const RuleService = {
   // Evaluate a rule by sending data to the backend
   async evaluateRule(ruleId, data) {
     try {
+      console.log("Evaluating rule", ruleId, data);
       const response = await axios.post(`${API_URL}/rules/${ruleId}/evaluate`, {
         data,
       });

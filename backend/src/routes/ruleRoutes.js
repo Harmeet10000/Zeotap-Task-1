@@ -6,6 +6,8 @@ import { createRule,
     updateRule,
     evaluateRule,
     combineRules,
+    // evaluateUserRule,
+    // registerCustomFunction,
  } from "../controllers/ruleController.js";
 
 const router = express.Router();
@@ -15,9 +17,10 @@ router.get("/rules", getAllRules);
 router.get("/rules/:ruleName", getRule);
 router.put("/rules/:ruleId", updateRule);
 router.delete("/rules/:ruleId", deleteRule);
-
-
 router.post("/rules/:ruleId/evaluate", evaluateRule);
 router.post("/rules/combine", combineRules);
+// router.post("/evaluate-rule", evaluateUserRule);
+// router.post('/register-udf', registerCustomFunction);  
+
 
 export default router;
