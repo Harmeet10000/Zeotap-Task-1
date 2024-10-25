@@ -32,6 +32,11 @@ and evaluating rules using Abstract Syntax Trees (AST). The backend is built usi
 
 ---
 
+## Docs
+- See docs for more info on the individual files.
+
+---
+
 ## Prerequisites
 Ensure the following are installed on your system:
 - **Node.js** (version 14.x or later)
