@@ -199,5 +199,13 @@ Frontend API interactions:
 
 ---
 
+![Weather Dashboard Screenshot](https://github.com/Harmeet10000/Zeotap-Task-1/blob/main/frontend/public/Screenshot%20from%202024-10-25%2016-36-04.png)
+![Weather Dashboard Screenshot](https://github.com/Harmeet10000/Zeotap-Task-1/blob/main/frontend/public/Screenshot%20from%202024-10-25%2016-36-12.png)
+![Weather Dashboard Screenshot](https://github.com/Harmeet10000/Zeotap-Task-1/blob/main/frontend/public/Screenshot%20from%202024-10-25%2016-36-48.png)
+![Weather Dashboard Screenshot](https://github.com/Harmeet10000/Zeotap-Task-1/blob/main/frontend/public/Screenshot%20from%202024-10-25%2016-37-08.png)
+
+
+
+
 ## License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
