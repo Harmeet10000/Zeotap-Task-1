@@ -42,6 +42,8 @@ Ensure the following are installed on your system:
 - **Node.js** (version 14.x or later)
 - **MongoDB** (running locally or accessible remotely)
 - **npm** (comes bundled with Node.js)
+- **Vite** (for running frontend)
+
 
 ---
 
