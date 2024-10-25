@@ -1,5 +1,8 @@
-### Table of Contents:
-```markdown
+This repository contains the backend and frontend for the AST project, implementing an API for managing 
+and evaluating rules using Abstract Syntax Trees (AST). The backend is built using Node.js, Express, and MongoDB, with a React frontend for user interaction.
+
+---
+
 ## Table of Contents
 - [Features](#features)
 - [Prerequisites](#prerequisites)
@@ -16,15 +19,6 @@
 - [API Integration](#api-integration)
 - [Design Choices](#design-choices)
 - [License](#license)
-```
-
----
-
-### Updated README with Corrections:
-```markdown
-# AST Backend
-
-This repository contains the backend and frontend for the AST project, implementing an API for managing and evaluating rules using Abstract Syntax Trees (AST). The backend is built using Node.js, Express, and MongoDB, with a React frontend for user interaction.
 
 ---
 
@@ -60,7 +54,12 @@ Ensure the following are installed on your system:
    npm install
    ```
 
-3. Update the `.env.sample` file with the following:
+3. Copy the sample environment file:
+   ```bash
+   cp .env.sample .env
+   ```
+
+4. Update the `.env` file with the following:
    ```
    MONGO_URI="mongodb://localhost:27017/rule-engine"
    PORT=8000
@@ -89,7 +88,7 @@ Ensure the following are installed on your system:
 ## Configuration
 
 ### Backend Configuration
-- **MongoDB**: Make sure MongoDB is running and accessible at the configured URI.
+- **MongoDB**: Ensure MongoDB is running and accessible at the configured URI.
 - **CORS**: CORS is enabled to allow requests from `http://localhost:5173`. Update the allowed origins if required.
 - **Rate Limiting**: Each IP is limited to 150 requests per hour to protect against abuse.
 
@@ -195,5 +194,3 @@ Frontend API interactions:
 
 ## License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-```
-
