@@ -59,12 +59,7 @@ Ensure the following are installed on your system:
    npm install
    ```
 
-3. Copy the sample environment file:
-   ```bash
-   cp .env.sample .env
-   ```
-
-4. Update the `.env` file with the following:
+3. Update the `.env.local` file with the following:
    ```
    MONGO_URI="mongodb://localhost:27017/rule-engine"
    PORT=8000
