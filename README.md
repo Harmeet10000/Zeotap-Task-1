@@ -32,6 +32,11 @@ and evaluating rules using Abstract Syntax Trees (AST). The backend is built usi
 
 ---
 
+## Docs
+- See docs for more info on the individual files.
+
+---
+
 ## Prerequisites
 Ensure the following are installed on your system:
 - **Node.js** (version 14.x or later)
@@ -151,6 +156,8 @@ The frontend includes:
      );
    }, []);
    ```
+- **Body Parser Limit**: Requests are limited to a 1MB body size to prevent large payload attacks.
+- **Compression**: Use the compression middleware (optional) for improved response times.
 
 ---
 
@@ -186,8 +193,8 @@ Frontend API interactions:
 1. **Modular Structure**: Backend code is divided into controllers, routes, and models.
 2. **AST for Rule Engine**: Efficient rule evaluation using Abstract Syntax Trees.
 3. **Mongoose ODM**: Simplifies MongoDB interactions.
-4. **Express Middleware**: Handles security, logging, and error management.
-5. **Environment Variables**: Sensitive configurations stored in `.env` for security.
+4. **Express Middleware**: Middleware is extensively used for security, logging, and error handling..
+5. **Environment Variables**: Sensitive configurations stored in `.env.sample` for security.
 6. **Utility-First Styling**: TailwindCSS simplifies frontend styling.
 
 ---
