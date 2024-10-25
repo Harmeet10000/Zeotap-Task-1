@@ -1,0 +1,94 @@
+
+RuleEngine Class Documentation
+==============================
+
+This file provides documentation for the `RuleEngine` class, which is used 
+to create, evaluate, and combine rules with abstract syntax tree (AST) logic. 
+It includes functionality for secure function registration, caching, and 
+rule validation.
+
+---
+
+1. Constructor and Configuration
+--------------------------------
+The constructor initializes the rule engine with optional settings:
+- **maxRuleDepth**: Limits the depth of nested rules (default: 10).
+- **maxRuleLength**: Limits the length of rule strings (default: 1000).
+- **maxExecutionTime**: Execution timeout for functions (default: 1000 ms).
+- **cacheSize**: Maximum size of the rule cache (default: 100).
+- **allowedFields**: Optional whitelist of allowed fields for rules.
+
+---
+
+2. Key Methods
+--------------
+
+- **registerFunction(name, fn)**:
+  Registers a function in the function registry with a security timeout.
+
+- **sanitizeArgs(args)**:
+  Sanitizes function arguments to prevent XSS attacks and invalid data.
+
+- **tokenizeRule(ruleString)**:
+  Tokenizes a rule string with caching and dangerous pattern detection.
+
+- **createRule(ruleString)**:
+  Parses a rule string into an AST, with field validation and depth tracking.
+
+- **evaluateRule(ast, data)**:
+  Evaluates an AST against a given data object with timeouts.
+
+- **safeDataAccess(data, field)**:
+  Safely accesses data fields, preventing prototype pollution.
+
+---
+
+3. Security Features
+---------------------
+- **XSS Prevention**: Replaces dangerous characters in input strings.
+- **Timeouts**: Functions and rule evaluations are terminated if they exceed 
+  the maximum execution time.
+- **Prototype Pollution Prevention**: Restricted access to `__proto__`, 
+  `constructor`, and `prototype`.
+
+---
+
+4. Caching Mechanism
+---------------------
+- Uses a Map to cache parsed rules for faster lookups.
+- Automatically removes the oldest entry when the cache size is exceeded.
+
+---
+
+5. Example Usage
+----------------
+```javascript
+const engine = getRuleEngine({
+  maxRuleDepth: 5,
+  allowedFields: ["age", "salary"],
+});
+
+const ruleAst = engine.createRule("age > 18 AND salary > 50000");
+const data = { age: 30, salary: 60000 };
+
+const result = engine.evaluateRule(ruleAst, data); // Returns true
+```
+
+---
+
+6. Performance Metrics
+-----------------------
+- The engine provides a `getPerformanceMetrics()` method to monitor performance:
+  ```javascript
+  const metrics = engine.getPerformanceMetrics();
+  console.log(metrics); // { cacheSize: 10, functionCount: 2, ... }
+  ```
+
+---
+
+7. Conclusion
+-------------
+The `RuleEngine` class offers a robust, secure, and efficient way to manage rules.
+Its use of ASTs allows for complex logical operations, and the caching mechanism
+ensures performance remains optimal. The security features make it safe for 
+real-world applications where input validation and restricted execution are critical.

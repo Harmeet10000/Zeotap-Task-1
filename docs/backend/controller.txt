@@ -1,0 +1,98 @@
+
+RuleController Documentation
+============================
+
+This file provides documentation for the rule controller used to manage rules 
+within a backend application. The controller handles creation, evaluation, 
+fetching, updating, deletion, and combining rules using MongoDB and an 
+abstract syntax tree (AST) structure.
+
+---
+
+1. Importing Dependencies
+--------------------------
+- RuleNode: The MongoDB model representing a rule node.
+- getRuleEngine: Service to obtain the rule engine instance.
+- mongoose: For validating MongoDB ObjectIds.
+
+---
+
+2. Functions Overview
+----------------------
+- **createMongooseDoc(node)**:
+  Converts an AST node into a Mongoose document structure recursively.
+
+- **isValidObjectId(id)**:
+  Validates whether a given ID is a valid MongoDB ObjectId.
+
+---
+
+3. Core Functionalities
+------------------------
+
+a) **Create Rule**:
+   - Endpoint: POST `/api/rules`
+   - Creates a rule by converting the provided rule string into an AST and 
+     saving it to the database.
+
+b) **Evaluate Rule**:
+   - Endpoint: POST `/api/rules/:ruleId/evaluate`
+   - Evaluates a rule with provided data and returns the eligibility result.
+
+c) **Fetch Rule by Name**:
+   - Endpoint: GET `/api/rules/:ruleName`
+   - Retrieves a rule from the database using the rule name.
+
+d) **Fetch All Rules**:
+   - Endpoint: GET `/api/rules`
+   - Retrieves all the rules stored in the database.
+
+e) **Delete Rule**:
+   - Endpoint: DELETE `/api/rules/:ruleId`
+   - Deletes a rule from the database using its ID.
+
+f) **Update Rule**:
+   - Endpoint: PUT `/api/rules/:ruleId`
+   - Updates a rule's name and expression.
+
+g) **Combine Rules**:
+   - Endpoint: POST `/api/rules/combine`
+   - Combines multiple rules into a single rule and saves it in the database.
+
+---
+
+4. Error Handling
+------------------
+Each function includes try-catch blocks to handle errors effectively. 
+Common error responses:
+- 400: Bad Request (e.g., invalid ID, missing data).
+- 404: Not Found (e.g., rule not found).
+- 500: Internal Server Error (e.g., database or server issue).
+
+---
+
+5. Security Considerations
+---------------------------
+- Input Validation: MongoDB ObjectId validation is performed before querying.
+- Data Parsing: AST parsing ensures valid rule expressions before evaluation.
+
+---
+
+6. Usage Example (createRule)
+------------------------------
+```javascript
+// Sample request body for creating a rule
+{
+  "ruleName": "Sample Rule",
+  "ruleString": "age > 18"
+}
+```
+
+---
+
+7. Conclusion
+--------------
+This rule controller provides essential CRUD operations and rule evaluation 
+functionalities with a secure and modular structure. It ensures that rules 
+are efficiently managed through a combination of AST parsing, MongoDB storage, 
+and robust error handling.

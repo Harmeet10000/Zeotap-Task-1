@@ -1,0 +1,89 @@
+
+RuleNode Model Documentation
+============================
+
+This file provides documentation for the RuleNode model used in the backend 
+application to represent individual rules within the system. Each rule is 
+defined by specific attributes and can contain nested rules, making it 
+suitable for complex logic using Abstract Syntax Trees (AST).
+
+---
+
+1. Importing Dependencies
+--------------------------
+- mongoose: A library for MongoDB object modeling used to define the schema 
+  and interact with the database.
+
+---
+
+2. RuleNode Schema Definition
+------------------------------
+The schema defines the structure of each rule, including its type, 
+operator, field, value, and potential nested logic.
+
+- **type** (String, required):
+  - Represents the type of node, e.g., "operator" or "comparison".
+
+- **operator** (String, optional):
+  - Stores logical operators like AND, OR, <, >, etc.
+
+- **field** (String, optional):
+  - Defines the field associated with the rule, e.g., "age", "salary".
+
+- **value** (Mixed, optional):
+  - Stores the value for the field, which can be a string or number.
+
+- **left** (Mixed, default: null):
+  - Holds a nested rule on the left side (for operator-based rules).
+
+- **right** (Mixed, default: null):
+  - Holds a nested rule on the right side (for operator-based rules).
+
+- **ruleName** (String, optional):
+  - The name of the rule for easy identification.
+
+- **ruleString** (String, optional):
+  - Stores the original rule string as provided.
+
+- **createdAt** (Date, default: Date.now):
+  - Automatically records the timestamp when the rule is created.
+
+---
+
+3. Model Creation
+------------------
+The schema is compiled into a model named "RuleNode". The model serves as an 
+interface for interacting with the corresponding MongoDB collection.
+
+```javascript
+const RuleNode = mongoose.model("RuleNode", RuleNodeSchema);
+export default RuleNode;
+```
+
+---
+
+4. Usage Example
+-----------------
+Creating a new rule and saving it to the database:
+
+```javascript
+const newRule = new RuleNode({
+  type: "comparison",
+  operator: ">",
+  field: "age",
+  value: 18,
+  ruleName: "Age Check",
+  ruleString: "age > 18"
+});
+
+await newRule.save();
+```
+
+---
+
+5. Conclusion
+--------------
+The RuleNode schema provides a flexible and powerful way to store and manage 
+rules within the backend. Its nested structure supports complex logic, while 
+MongoDB ensures efficient storage and retrieval. The schema design aligns 
+with the system's need for rule-based operations using AST logic.

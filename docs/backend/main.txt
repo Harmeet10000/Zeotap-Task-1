@@ -9,6 +9,23 @@ that implements several middleware functions to ensure security, limit API reque
 handle JSON parsing, and enable cross-origin resource sharing (CORS). Additionally, 
 the server routes incoming requests to the appropriate endpoints and manages errors gracefully.
 
+Folder Structure
+----------------
+The project is organized into the following folders and files:
+
+- **backend/**
+  - **src/**
+    - **controllers/**: Contains the logic for handling API requests.
+    - **models/**: Defines the MongoDB schemas and models.
+    - **services/**: Business logic separated from controllers.
+    - **routes/**: Manages API routes and links them to controllers.
+  - **utils/**: Contains utility functions and helpers.
+  - **.gitignore**: Specifies files and folders to be ignored by Git.
+  - **package-lock.json**: Tracks exact dependency versions.
+  - **package.json**: Manages project dependencies and scripts.
+
+---
+
 Dependencies:
 --------------
 1. `express`: Fast, unopinionated, minimalist web framework for Node.js.

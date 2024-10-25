@@ -1,0 +1,97 @@
+
+Zod Validation Schemas Documentation
+====================================
+
+This file provides documentation for the validation schemas used to ensure 
+data integrity and correctness within the application. The schemas are built 
+using `zod`, a TypeScript-first schema declaration and validation library.
+
+---
+
+1. Overview
+-----------
+The Zod schemas validate inputs for rule creation and rule evaluation data. 
+These schemas ensure that only valid and correctly formatted data is processed, 
+preventing unexpected behavior or errors in the application.
+
+---
+
+2. Dependencies
+----------------
+- **zod**: A library used to define and validate schemas.
+
+Import:
+```javascript
+import { z } from "zod";
+```
+
+---
+
+3. Rule Creation Schema
+------------------------
+The `ruleSchema` ensures that rules are created with a valid name and expression.
+
+### Fields:
+- **ruleName**: A non-empty string is required.
+  - **Validation**: Must contain at least one character.
+  - **Error Message**: "Rule name is required".
+
+- **ruleString**: A string containing a valid rule expression.
+  - **Validation**:
+    - Must contain at least one character.
+    - Can only use letters, numbers, spaces, and specific operators: `()><='"|&`.
+  - **Regex**: `/^[A-Za-z0-9\s()><='"|&]+$/`.
+  - **Error Message**: "Invalid characters in rule. Only use letters, numbers, spaces, and operators."
+
+Example:
+```javascript
+const rule = {
+  ruleName: "Sample Rule",
+  ruleString: "age > 18 AND salary > 50000"
+};
+ruleSchema.parse(rule); // Validates the rule
+```
+
+---
+
+4. Evaluation Data Schema
+--------------------------
+The `evaluationSchema` validates the data used to evaluate rules.
+
+### Fields:
+- **age**: A number representing the age of an individual.
+  - **Validation**: Must be between 0 and 120.
+  - **Error Message**: "Age must be between 0 and 120".
+
+- **department**: A non-empty string representing the department.
+  - **Validation**: Must contain at least one character.
+  - **Error Message**: "Department is required".
+
+- **salary**: A non-negative number representing the salary.
+  - **Validation**: Must be zero or greater.
+  - **Error Message**: "Salary must be non-negative".
+
+- **experience**: A non-negative number representing years of experience.
+  - **Validation**: Must be zero or greater.
+  - **Error Message**: "Experience must be non-negative".
+
+Example:
+```javascript
+const evaluationData = {
+  age: 30,
+  department: "Engineering",
+  salary: 60000,
+  experience: 5
+};
+evaluationSchema.parse(evaluationData); // Validates the evaluation data
+```
+
+---
+
+5. Conclusion
+-------------
+The Zod validation schemas ensure that both rule creation and evaluation data 
+conform to predefined formats and constraints. Using these schemas, the 
+application can confidently process data without worrying about invalid input.
+Any errors or violations are captured early, with meaningful error messages 
+returned to the user or developer.

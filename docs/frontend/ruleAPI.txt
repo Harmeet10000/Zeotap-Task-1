@@ -1,0 +1,117 @@
+
+RuleService Documentation
+==========================
+
+This file provides documentation for the `RuleService` module, which uses the 
+`axios` library to interact with a backend API. The service handles CRUD 
+operations for rules and communicates with the backend to create, retrieve, 
+update, delete, combine, and evaluate rules.
+
+---
+
+1. Dependencies
+----------------
+- **axios**: A promise-based HTTP client for making API requests.
+
+Import:
+```javascript
+import axios from "axios";
+```
+
+---
+
+2. Configuration
+-----------------
+- **API_URL**: The base URL for the backend API.
+  ```javascript
+  const API_URL = "http://localhost:8000/api";
+  ```
+
+---
+
+3. Methods Overview
+--------------------
+
+- **createRule(ruleName, ruleString)**:
+  - Sends a POST request to create a new rule.
+  - **Parameters**:
+    - `ruleName`: Name of the rule.
+    - `ruleString`: The rule expression.
+  - **Returns**: The created rule data.
+  - **Error Handling**: Throws an error if the creation fails.
+
+- **getRules()**:
+  - Sends a GET request to retrieve all rules.
+  - **Returns**: An array of rules.
+  - **Error Handling**: Throws an error if fetching fails.
+
+- **combineRules(ruleIds)**:
+  - Sends a POST request to combine multiple rules.
+  - **Parameters**:
+    - `ruleIds`: An array of rule IDs to combine.
+  - **Returns**: The combined rule data.
+  - **Error Handling**: Throws an error if the combination fails.
+
+- **evaluateRule(ruleId, data)**:
+  - Sends a POST request to evaluate a specific rule with the provided data.
+  - **Parameters**:
+    - `ruleId`: The ID of the rule to evaluate.
+    - `data`: The data to be evaluated against the rule.
+  - **Returns**: A boolean indicating eligibility.
+  - **Error Handling**: Throws an error if the evaluation fails.
+
+- **getRule(id)**:
+  - Sends a GET request to retrieve a specific rule by its ID.
+  - **Parameters**:
+    - `id`: The ID of the rule.
+  - **Returns**: The rule data.
+  - **Error Handling**: Throws an error if fetching fails.
+
+- **deleteRule(ruleId)**:
+  - Sends a DELETE request to delete a specific rule by its ID.
+  - **Parameters**:
+    - `ruleId`: The ID of the rule to delete.
+  - **Returns**: A success message.
+  - **Error Handling**: Throws an error if deletion fails.
+
+- **updateRule(ruleId, updatedData)**:
+  - Sends a PUT request to update a specific rule.
+  - **Parameters**:
+    - `ruleId`: The ID of the rule to update.
+    - `updatedData`: The new data for the rule.
+  - **Returns**: The updated rule data.
+  - **Error Handling**: Throws an error if the update fails.
+
+---
+
+4. Example Usage
+-----------------
+```javascript
+import { RuleService } from "./RuleService";
+
+// Example: Creating a rule
+RuleService.createRule("Sample Rule", "age > 18").then((data) =>
+  console.log("Created Rule:", data)
+);
+
+// Example: Evaluating a rule
+const data = { age: 25, department: "Engineering", salary: 50000, experience: 2 };
+RuleService.evaluateRule("12345", data).then((eligible) =>
+  console.log("Evaluation Result:", eligible)
+);
+```
+
+---
+
+5. Error Handling
+------------------
+Each method includes try-catch blocks to handle errors effectively. The error 
+messages returned by the backend are extracted and thrown for better clarity.
+
+---
+
+6. Conclusion
+-------------
+The `RuleService` module provides an easy-to-use interface for interacting with 
+the backend API. It ensures that all rule operations are handled smoothly with 
+proper error handling and structured requests.
