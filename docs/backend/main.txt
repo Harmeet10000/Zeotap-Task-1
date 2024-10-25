@@ -1,0 +1,91 @@
+
+Express Server Setup Documentation
+==================================
+
+Overview:
+---------
+This documentation explains the structure and configuration of an Express.js server 
+that implements several middleware functions to ensure security, limit API requests, 
+handle JSON parsing, and enable cross-origin resource sharing (CORS). Additionally, 
+the server routes incoming requests to the appropriate endpoints and manages errors gracefully.
+
+Dependencies:
+--------------
+1. `express`: Fast, unopinionated, minimalist web framework for Node.js.
+2. `cors`: Allows cross-origin requests to the API.
+3. `helmet`: Helps secure the app by setting various HTTP headers.
+4. `xss-clean`: Protects against cross-site scripting (XSS) attacks.
+5. `express-rate-limit`: Limits the number of requests to prevent abuse.
+6. `hpp`: Protects against HTTP Parameter Pollution attacks.
+7. `express-mongo-sanitize`: Prevents NoSQL query injection attacks.
+8. `ruleRoutes`: Routes for API requests defined in a separate module.
+
+Rate Limiting:
+--------------
+- Middleware: `express-rate-limit`
+- Configuration: Limits the number of requests to **150** per hour from the same IP.
+- If the limit is exceeded, the server returns the following message:
+  ```
+  "Too many requests from this IP, please try again in an hour!"
+  ```
+
+CORS Configuration:
+--------------------
+- Allows requests only from `http://localhost:5173`.
+- Permitted HTTP Methods: GET, POST, PUT, DELETE, PATCH, OPTIONS.
+- Allowed Headers: Authorization, Content-Type.
+- Enables credentials to be shared across domains.
+
+Body Parsing:
+-------------
+- Middleware: `express.json()`
+- Limits the size of JSON payloads to **1MB**.
+
+Security Measures:
+-------------------
+1. **Mongo Sanitize**: Removes potentially malicious data to prevent NoSQL injections.
+2. **XSS Clean**: Protects the app from XSS attacks by sanitizing user inputs.
+3. **Helmet**: Adds secure HTTP headers.
+4. **HPP (HTTP Parameter Pollution Protection)**: Prevents pollution of query parameters.
+   - Whitelist: No specific parameters listed.
+
+Routes:
+-------
+- API Routes: `ruleRoutes` imported from `"./routes/ruleRoutes.js"`.
+- Mounted at: `/api`.
+
+Error Handling:
+---------------
+- If a request is made to an undefined route, the following middleware triggers:
+  ```
+  app.all("*", (req, res, next) => {
+    next(new AppError(\`Can't find ${req.originalUrl} on this server!\`, 404));
+  });
+  ```
+- **Note**: This uses the `AppError` class to create and pass an error with status code 404.
+
+Custom Middleware:
+-------------------
+- A test middleware adds the current timestamp to the `req` object:
+  ```
+  app.use((req, res, next) => {
+    req.requestTime = new Date().toISOString();
+    next();
+  });
+  ```
+
+How to Use:
+-----------
+1. Import the `app` object from this module.
+2. Start the server using:
+   ```
+   import { app } from './path_to_this_file';
+   app.listen(port, () => {
+     console.log(\`Server running on port ${port}\`);
+   });
+   ```
+
+Notes:
+------
+- Ensure all necessary middleware and route modules are installed and properly configured.
+- Modify the CORS origin if deploying to a production environment.

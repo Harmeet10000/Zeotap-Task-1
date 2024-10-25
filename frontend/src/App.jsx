@@ -3,7 +3,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 import RuleEngine from "./components/RuleEngine";
 
-function App() {
+const App = () => {
   return (
     <>
       <RuleEngine />

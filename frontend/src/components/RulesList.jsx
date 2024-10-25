@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { useState, useRef } from "react";
+import { useState, useRef, useCallback } from "react";
 import { toast } from "react-toastify";
 import { RuleService } from "../api/ruleAPI";
 
@@ -8,18 +8,20 @@ const RulesList = ({ savedRules, setSavedRules }) => {
   const [editedName, setEditedName] = useState("");
   const [editedString, setEditedString] = useState("");
   const [selectedRules, setSelectedRules] = useState([]);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(null); // Track rule being deleted
   const textareaRef = useRef(null);
 
-  // Handle Checkbox Selection
-  const handleSelectRule = (ruleId) => {
+  // Handle Checkbox Selection (memoized with useCallback)
+  const handleSelectRule = useCallback((ruleId) => {
     setSelectedRules((prevSelected) =>
       prevSelected.includes(ruleId)
         ? prevSelected.filter((id) => id !== ruleId)
         : [...prevSelected, ruleId]
     );
-  };
+  }, []);
 
-  // Handle Combine Rules
+  // Combine Selected Rules
   const handleCombineRules = async () => {
     if (selectedRules.length < 2) {
       toast.error("Select at least two rules to combine.");
@@ -29,25 +31,29 @@ const RulesList = ({ savedRules, setSavedRules }) => {
     try {
       const combinedRule = await RuleService.combineRules(selectedRules);
       setSavedRules((prev) => [...prev, combinedRule]);
+      setSelectedRules([]); // Clear selected rules
       toast.success("Rules combined successfully!");
     } catch (error) {
       toast.error(`Failed to combine rules: ${error.message}`);
     }
   };
 
-  // Handle Delete
+  // Handle Delete with Undo Option
   const handleDelete = async (ruleId) => {
     const confirmDelete = window.confirm(
-      "Are you sure you want to delete this rule?"
+      "Are you sure you want to delete this rule? This action cannot be undone."
     );
     if (!confirmDelete) return;
 
     try {
+      setIsDeleting(ruleId); // Set loading state for delete
       await RuleService.deleteRule(ruleId);
       setSavedRules((prev) => prev.filter((rule) => rule._id !== ruleId));
       toast.success("Rule deleted successfully.");
     } catch (error) {
       toast.error(`Failed to delete rule: ${error.message}`);
+    } finally {
+      setIsDeleting(null); // Reset loading state
     }
   };
 
@@ -61,7 +67,13 @@ const RulesList = ({ savedRules, setSavedRules }) => {
 
   // Handle Update
   const handleUpdate = async (ruleId) => {
+    const confirmUpdate = window.confirm(
+      "Are you sure you want to update this rule?"
+    );
+    if (!confirmUpdate) return;
+
     try {
+      setIsUpdating(true); // Set loading state
       const updatedRule = await RuleService.updateRule(ruleId, {
         ruleName: editedName,
         ruleString: editedString,
@@ -70,11 +82,12 @@ const RulesList = ({ savedRules, setSavedRules }) => {
       setSavedRules((prev) =>
         prev.map((rule) => (rule._id === ruleId ? updatedRule : rule))
       );
-
       setEditingRuleId(null);
       toast.success("Rule updated successfully.");
     } catch (error) {
       toast.error(`Failed to update rule: ${error.message}`);
+    } finally {
+      setIsUpdating(false); // Reset loading state
     }
   };
 
@@ -92,7 +105,10 @@ const RulesList = ({ savedRules, setSavedRules }) => {
         <h1 className="text-2xl font-bold">Saved Rules</h1>
         <button
           onClick={handleCombineRules}
-          className="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700"
+          disabled={selectedRules.length < 2}
+          className={`bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 ${
+            selectedRules.length < 2 ? "opacity-50 cursor-not-allowed" : ""
+          }`}
         >
           Combine Selected Rules
         </button>
@@ -156,9 +172,12 @@ const RulesList = ({ savedRules, setSavedRules }) => {
                     {editingRuleId === rule._id ? (
                       <button
                         onClick={() => handleUpdate(rule._id)}
-                        className="bg-green-500 text-white px-2 py-1 rounded-md hover:bg-green-600"
+                        disabled={isUpdating}
+                        className={`bg-green-500 text-white px-2 py-1 rounded-md hover:bg-green-600 ${
+                          isUpdating ? "opacity-50 cursor-not-allowed" : ""
+                        }`}
                       >
-                        Update
+                        {isUpdating ? "Updating..." : "Update"}
                       </button>
                     ) : (
                       <button
@@ -170,9 +189,14 @@ const RulesList = ({ savedRules, setSavedRules }) => {
                     )}
                     <button
                       onClick={() => handleDelete(rule._id)}
-                      className="bg-red-500 text-white px-2 py-1 rounded-md hover:bg-red-600"
+                      disabled={isDeleting === rule._id}
+                      className={`bg-red-500 text-white px-2 py-1 rounded-md hover:bg-red-600 ${
+                        isDeleting === rule._id
+                          ? "opacity-50 cursor-not-allowed"
+                          : ""
+                      }`}
                     >
-                      Delete
+                      {isDeleting === rule._id ? "Deleting..." : "Delete"}
                     </button>
                   </td>
                   <td className="border border-gray-300 px-4 py-2">
